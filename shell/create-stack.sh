@@ -10,7 +10,7 @@ export LAMBDA_HANDLER_S3_KEY="agent/lambda/agent-handler/agent_deployment_packag
 export LEX_BOT_S3_KEY="agent/bot/lex.zip"
 
 aws s3 mb s3://${S3_ARTIFACT_BUCKET_NAME} --region us-east-1
-aws s3 cp ../agent/ s3://${S3_ARTIFACT_BUCKET_NAME}/agent/ --recursive --exclude ".DS_Store"
+aws s3 sync ../agent/ s3://${S3_ARTIFACT_BUCKET_NAME}/agent/  --exclude ".DS_Store" #--recursive
 
 export BEDROCK_LANGCHAIN_LAYER_ARN=$(aws lambda publish-layer-version \
     --layer-name bedrock-langchain-pdfrw \
@@ -20,7 +20,7 @@ export BEDROCK_LANGCHAIN_LAYER_ARN=$(aws lambda publish-layer-version \
     --compatible-runtimes python3.11 \
     --query LayerVersionArn --output text)
 
-export GITHUB_TOKEN_SECRET_NAME=$(aws secretsmanager create-secret --name $STACK_NAME-git-pat \
+export GITHUB_TOKEN_SECRET_NAME=$(aws secretsmanager create-secret --name $STACK_NAME-git-pat-s1 \
 --secret-string $GITHUB_PAT --query Name --output text)
 
 aws cloudformation create-stack \
